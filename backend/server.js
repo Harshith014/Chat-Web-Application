@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://chat-app-1-gq5y.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
 }));
