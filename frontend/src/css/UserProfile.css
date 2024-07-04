@@ -1,0 +1,56 @@
+/* Global styles */
+.profile-container {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Large screens (desktops) */
+@media (min-width: 1200px) {
+  .profile-container {
+    max-width: 50%;
+    margin: auto;
+  }
+  .profile-box {
+    padding: 32px;
+  }
+}
+
+/* Medium screens (laptops) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .profile-container {
+    max-width: 70%;
+    margin: auto;
+  }
+  .profile-box {
+    padding: 24px;
+  }
+}
+
+/* Small screens (tablets) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .profile-container {
+    max-width: 85%;
+    margin: auto;
+  }
+  .profile-box {
+    padding: 16px;
+  }
+}
+
+/* Extra small screens (mobiles) */
+@media (max-width: 767px) {
+  .profile-container {
+    width: 100%;
+    padding: 8px;
+  }
+  .profile-box {
+    padding: 8px;
+  }
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
+  .profile-button {
+    margin-top: 8px;
+  }
+}

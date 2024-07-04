@@ -1,0 +1,156 @@
+/* Global styles */
+.register-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.register-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.register-content.dark {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.register-box {
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    background-color: #fff;
+}
+
+.register-box.dark {
+    background-color: #2d2d2d;
+    color: #fff;
+}
+
+.register-box .MuiInputLabel-root {
+    color: #9e9e9e;
+}
+
+.register-box.dark .MuiInputLabel-root {
+    color: #bdbdbd;
+}
+
+.register-box .MuiInputBase-input {
+    color: #000;
+}
+
+.register-box.dark .MuiInputBase-input {
+    color: #fff;
+}
+
+.dark-input .MuiInputBase-input {
+    color: white !important;
+}
+
+.dark-input .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(255, 255, 255, 0.23) !important;
+}
+
+.dark-input:hover .MuiOutlinedInput-notchedOutline {
+    border-color: rgba(255, 255, 255, 0.87) !important;
+}
+
+.dark-input.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #1976d2 !important;
+}
+
+/* Large screens (desktops) */
+@media (min-width: 1200px) {
+    .register-box {
+        width: 50%;
+    }
+    .register-box h3 {
+        font-size: 2.5rem;
+    }
+    .register-box h4 {
+        font-size: 2rem;
+    }
+    .register-box p {
+        font-size: 1.25rem;
+    }
+}
+
+/* Medium screens (laptops) */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .register-box {
+        width: 60%;
+    }
+    .register-box h3 {
+        font-size: 2rem;
+    }
+    .register-box h4 {
+        font-size: 1.75rem;
+    }
+    .register-box p {
+        font-size: 1rem;
+    }
+}
+
+/* Small screens (tablets) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .bluebox {
+        width: 90%;
+    }
+    .register-box {
+        width: 75%;
+    }
+    .register-box h3 {
+        font-size: 1.75rem;
+    }
+    .register-box h4 {
+        font-size: 1.5rem;
+    }
+    .register-box p {
+        font-size: 0.875rem;
+    }
+}
+
+/* Extra small screens (mobiles) */
+@media (max-width: 767px) {
+    .bluebox {
+        width: 94%;
+    }
+    .bluebox h3 {
+        font-size: 30px;
+    }
+    .bluebox p {
+        font-size: 15px;
+    }
+    .register-box {
+        width: 85%;
+        padding: 1rem;
+    }
+    .register-box h3 {
+        font-size: 30px;
+    }
+    .register-box h4 {
+        font-size: 27px;
+    }
+    .register-box p {
+        font-size: 15px;
+    }
+    .register-box .MuiInputLabel-root {
+        font-size: 0.75rem;
+    }
+    .register-box .MuiInputBase-input {
+        font-size: 0.875rem;
+    }
+    .register-box button {
+        font-size: 0.875rem;
+    }
+}

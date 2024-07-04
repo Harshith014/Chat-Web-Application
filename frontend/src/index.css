@@ -1,0 +1,9 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* html, body {
+    @apply overflow-hidden m-0 p-0;
+  } */
+  

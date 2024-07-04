@@ -1,0 +1,85 @@
+/* Global styles */
+.chat-container {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Large screens (desktops) */
+@media (min-width: 1200px) {
+  .chat-sidebar {
+    width: 25%;
+  }
+  .chat-main {
+    width: 75%;
+  }
+  .chat-history {
+    max-height: calc(100vh - 250px);
+  }
+  .chat-input {
+    padding: 16px;
+  }
+}
+
+/* Medium screens (laptops) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .chat-sidebar {
+    width: 30%;
+  }
+  .chat-main {
+    width: 70%;
+  }
+  .chat-history {
+    max-height: calc(100vh - 200px);
+  }
+  .chat-input {
+    padding: 12px;
+  }
+}
+
+/* Small screens (tablets) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .chat-sidebar {
+    width: 35%;
+  }
+  .chat-main {
+    width: 65%;
+  }
+  .chat-history {
+    max-height: calc(100vh - 150px);
+    height: 28rem;
+  }
+  .chat-input {
+    padding: 8px;
+  }
+}
+
+/* Extra small screens (mobiles) */
+@media (max-width: 767px) {
+  .chat-sidebar {
+    width: 100%;
+    padding: 8px;
+  }
+  .chat-main {
+    width: 100%;
+    padding: 8px;
+    height: 40rem;
+  }
+  .chat-history {
+    max-height: calc(100vh - 100px);
+    height: 28rem;
+  }
+  .chat-input {
+    padding: 4px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .chat-container {
+    font-size: 14px; /* Reduced font size for mobile devices */
+  }
+  .chat-input .MuiInputBase-input {
+    font-size: 0.875rem; /* Reduced font size for input field */
+  }
+  .MuiSvgIcon-root {
+    font-size: 1.25rem; /* Reduced icon size */
+  }
+}
