@@ -16,8 +16,8 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     fileFilter: function (req, file, cb) {
-        console.log('File MIME type:', file.mimetype); // Log the MIME type of the file
-        console.log('File extension:', path.extname(file.originalname)); // Log the file's extension
+        // console.log('File MIME type:', file.mimetype); // Log the MIME type of the file
+        // console.log('File extension:', path.extname(file.originalname)); // Log the file's extension
         const filetypes = /wav|mp3|png|pdf|jpg|jpeg|jfif|ogg|webm/; // Include WebM in the allowed file types
         const mimetype = filetypes.test(file.mimetype);
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
