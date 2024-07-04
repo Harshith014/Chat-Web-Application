@@ -23,7 +23,7 @@ app.use(cors({
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: ["http://localhost:3000"],
+        origin: ["https://chat-app-1-gq5y.onrender.com"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     }

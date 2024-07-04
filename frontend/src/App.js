@@ -27,9 +27,7 @@ const Header = () => {
     navigate('/chat');
   };
 
-  // const handleHomeClick = () => {
-  //   navigate('/home');
-  // };
+
 
   // Hide header on login and register pages
   if (location.pathname === '/login' || location.pathname === '/register') {
@@ -57,9 +55,7 @@ const Header = () => {
                 <AccountCircle />
               </IconButton>
             </Tooltip>
-            {/* <Button color="inherit" onClick={handleHomeClick}>
-              Home
-            </Button> */}
+
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
@@ -77,12 +73,13 @@ const App = () => {
         <div>
           <Header />
           <Routes>
+            <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/allusers" element={<Allusers />} />
             <Route path="/profile" element={<UserProfile />} />
-            {/* <Route path="/home" element={<Homepage />} /> */}
+
           </Routes>
         </div>
       </Router>
