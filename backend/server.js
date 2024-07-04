@@ -69,7 +69,7 @@ io.on('connection', (socket) => {
         }
     });
 });
-
+app.use(express.static(path.join(__dirname, "build")));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
