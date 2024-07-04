@@ -14,7 +14,7 @@ const Notify = ({ userId }) => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/notifications/${userId}`);
+                const response = await axios.get(`https://chat-app-1-gq5y.onrender.com/api/notifications/${userId}`);
                 setNotifications(response.data.data);
                 setLoading(false);
             } catch (err) {
@@ -27,7 +27,7 @@ const Notify = ({ userId }) => {
     }, [userId]);
 
     useEffect(() => {
-        const socket = io('http://localhost:5000', {
+        const socket = io('https://chat-app-1-gq5y.onrender.com', {
             transports: ['websocket'],
             auth: {
                 token: localStorage.getItem('token'),

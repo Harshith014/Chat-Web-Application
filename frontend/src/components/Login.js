@@ -39,7 +39,7 @@ const Login = () => {
         }
 
         try {
-            const { data } = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const { data } = await axios.post('https://chat-app-1-gq5y.onrender.com/api/auth/login', formData);
             localStorage.setItem('token', data.token);
             navigate('/chat');
         } catch (error) {

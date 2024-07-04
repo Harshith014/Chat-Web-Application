@@ -57,7 +57,7 @@ const UserProfile = () => {
 
         const fetchUserProfile = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/auth/profile/${userId}`, config);
+                const response = await axios.get(`https://chat-app-1-gq5y.onrender.com/api/auth/profile/${userId}`, config);
                 setUserProfile(response.data);
             } catch (err) {
                 setError(err.response ? err.response.data.message : 'Server error');
@@ -100,7 +100,7 @@ const UserProfile = () => {
         }
 
         try {
-            const response = await axios.put(`http://localhost:5000/api/auth/profile/${userId}`, formData, config);
+            const response = await axios.put(`https://chat-app-1-gq5y.onrender.com/api/auth/profile/${userId}`, formData, config);
             setUserProfile(response.data);
             setMessage('Profile updated successfully');
             setEditing(false);
@@ -138,7 +138,7 @@ const UserProfile = () => {
                 <Grid container spacing={4} justifyContent="center">
                     <Grid item xs={12} md={6}>
                         <StyledAvatar
-                            src={previewUrl || (userProfile.avatar ? `http://localhost:5000${userProfile.avatar}` : null)}
+                            src={previewUrl || (userProfile.avatar ? `https://chat-app-1-gq5y.onrender.com${userProfile.avatar}` : null)}
                             alt={userProfile.username}
                         >
                             {!previewUrl && !userProfile.avatar && <AccountCircleIcon fontSize="large" />}
