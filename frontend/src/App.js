@@ -1,7 +1,7 @@
 import { AccountCircle, Brightness4, Brightness7 } from '@mui/icons-material';
 import { Box, Button, Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import React, { useContext } from 'react';
-import { Route, BrowserRouter as Router, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, BrowserRouter as Router, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Allusers from './components/Allusers';
 import Chat from './components/Chat';
 import Login from './components/Login';
@@ -27,8 +27,6 @@ const Header = () => {
     navigate('/chat');
   };
 
-
-
   // Hide header on login and register pages
   if (location.pathname === '/login' || location.pathname === '/register') {
     return null;
@@ -36,7 +34,6 @@ const Header = () => {
 
   return (
     <Box className="p-4" sx={{ backgroundColor: '#333', color: '#fff', border: '2px solid #444' }}>
-      {/* Set fixed dark background, white font color, and outline */}
       <Grid container justifyContent="space-between" alignItems="center">
         <Grid item>
           <Typography variant="h5" component="h2" sx={{ cursor: 'pointer' }} onClick={handleAppClick}>
@@ -55,7 +52,6 @@ const Header = () => {
                 <AccountCircle />
               </IconButton>
             </Tooltip>
-
             <Button color="inherit" onClick={handleLogout}>
               Logout
             </Button>
@@ -67,23 +63,18 @@ const Header = () => {
 };
 
 const App = () => {
-  const Navigate = useNavigate();
   return (
     <ThemeContextProvider>
       <Router>
-        <div>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/allusers" element={<Allusers />} />
-            <Route path="/profile" element={<UserProfile />} />
-
-          </Routes>
-        </div>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/allusers" element={<Allusers />} />
+          <Route path="/profile" element={<UserProfile />} />
+        </Routes>
       </Router>
     </ThemeContextProvider>
   );
