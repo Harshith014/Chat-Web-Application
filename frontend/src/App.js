@@ -67,13 +67,15 @@ const Header = () => {
 };
 
 const App = () => {
+  const Navigate = useNavigate();
   return (
     <ThemeContextProvider>
       <Router>
         <div>
           <Header />
           <Routes>
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Navigate to="/login" />} />
+
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/chat" element={<Chat />} />
