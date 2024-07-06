@@ -40,7 +40,7 @@ const Register = () => {
         }
 
         try {
-            const { data } = await axios.post('https://chat-app-1-gq5y.onrender.com/api/auth/register', formData);
+            const { data } = await axios.post('https://chat-app-mkfi.onrender.com/api/auth/register', formData);
             console.log(data); // Handle success response here
             navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {

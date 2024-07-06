@@ -75,7 +75,7 @@ const Chat = () => {
                 return;
             }
 
-            const response = await axios.get(`https://chat-app-1-gq5y.onrender.com/api/chat/theme?sender=${userId}&receiver=${receiver}`);
+            const response = await axios.get(`https://chat-app-mkfi.onrender.com/api/chat/theme?sender=${userId}&receiver=${receiver}`);
             const themeFromDB = response.data.theme;
             setSelectedThemes((prevThemes) => ({ ...prevThemes, [receiver]: themeFromDB }));
         } catch (error) {
@@ -97,7 +97,7 @@ const Chat = () => {
                 return;
             }
 
-            await axios.post(`https://chat-app-1-gq5y.onrender.com/api/chat/theme`, { sender: userId, receiver: receiver, theme });
+            await axios.post(`https://chat-app-mkfi.onrender.com/api/chat/theme`, { sender: userId, receiver: receiver, theme });
         } catch (error) {
             console.error(error);
         }
@@ -140,7 +140,7 @@ const Chat = () => {
             }
             const senderId = userId;
 
-            const res = await axios.get(`https://chat-app-1-gq5y.onrender.com/api/chat/${senderId}/${receiverId}`, config);
+            const res = await axios.get(`https://chat-app-mkfi.onrender.com/api/chat/${senderId}/${receiverId}`, config);
 
             // Update chat history for the specific receiver
             setChatHistory(prevChatHistory => ({
@@ -175,7 +175,7 @@ const Chat = () => {
 
             const data = { sender, receiver, message, targetLanguage };
 
-            const res = await axios.post('https://chat-app-1-gq5y.onrender.com/api/chat/send', data, config);
+            const res = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/send', data, config);
             // Check if translations are available
             const translationsAvailable = res.data.translationsAvailable;
 
@@ -235,7 +235,7 @@ const Chat = () => {
             formData.append('receiver', receiver);
             formData.append('image', imageFile);
 
-            const res = await axios.post('https://chat-app-1-gq5y.onrender.com/api/chat/image', formData, {
+            const res = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/image', formData, {
                 headers: {
                     ...config.headers,
                     'Content-Type': 'multipart/form-data',
@@ -277,7 +277,7 @@ const Chat = () => {
             formData.append('receiver', receiver);
             formData.append('file', docFile);
 
-            const res = await axios.post('https://chat-app-1-gq5y.onrender.com/api/chat/docs', formData, {
+            const res = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/docs', formData, {
                 headers: {
                     ...config.headers,
                     'Content-Type': 'multipart/form-data',
@@ -636,15 +636,15 @@ const Chat = () => {
                                                 <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
                                             ) : chat.voiceMessageUrl ? (
                                                 <audio controls>
-                                                    <source src={`https://chat-app-1-gq5y.onrender.com${chat.voiceMessageUrl}`} type="audio/webm" />
+                                                    <source src={`https://chat-app-mkfi.onrender.com${chat.voiceMessageUrl}`} type="audio/webm" />
                                                     Your browser does not support the audio element.
                                                 </audio>
                                             ) : chat.imageUrl ? (
-                                                <img src={`https://chat-app-1-gq5y.onrender.com${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
+                                                <img src={`https://chat-app-mkfi.onrender.com${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
                                             ) : chat.docUrl ? (
                                                 <div>
                                                     <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
-                                                    <a href={`https://chat-app-1-gq5y.onrender.com${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
+                                                    <a href={`https://chat-app-mkfi.onrender.com${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
                                                         {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
                                                     </a>
                                                 </div>

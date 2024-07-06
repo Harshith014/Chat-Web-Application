@@ -31,7 +31,7 @@ const VoiceMessage = ({ sender, receiver, onMessageSent }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             };
-            const response = await axios.post('https://chat-app-1-gq5y.onrender.com/api/chat/voice-message', formData, config);
+            const response = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/voice-message', formData, config);
             console.log(response.data);
             alert('Voice message sent successfully');
             onMessageSent();

@@ -24,7 +24,7 @@ const DocumentPreview = ({ docUrl, docName }) => {
     }, [docName]);
 
     const handleDownload = () => {
-        saveAs(`https://chat-app-1-gq5y.onrender.com${docUrl}`, docName);
+        saveAs(`https://chat-app-mkfi.onrender.com${docUrl}`, docName);
     };
 
     const handleOpen = () => {
