@@ -451,7 +451,7 @@ const Chat = () => {
                                                                     Your browser does not support the audio element.
                                                                 </audio>
                                                             ) : chat.imageUrl ? (
-                                                                <img src={chat.imageUrl} alt="pic" className="max-w-full h-auto" />
+                                                                <img src={`https:${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
                                                             ) : chat.docUrl ? (
                                                                 <div>
                                                                     <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
