@@ -5,7 +5,7 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import ImageIcon from '@mui/icons-material/Image';
 import PaletteIcon from '@mui/icons-material/Palette';
 import SendIcon from '@mui/icons-material/Send';
-import { Box, IconButton, MenuItem, Popover, Select, TextField, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, IconButton, MenuItem, Popover, Select, TextField, Typography, useTheme } from '@mui/material';
 import axios from 'axios';
 import EmojiPicker from 'emoji-picker-react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
@@ -16,6 +16,7 @@ import { getUserIdFromToken } from '../utils/Auth';
 import Allusers from './Allusers';
 import Notify from './Notify';
 import VoiceMessage from './VoiceMsg';
+
 const themeOptions = [
     { name: 'Default', backgroundColor: '#ffffff', textColor: '#000000' },
     { name: 'Dark Mode', backgroundColor: '#333333', textColor: '#ffffff' },
@@ -26,8 +27,7 @@ const themeOptions = [
 
 const Chat = () => {
     const chatHistoryRef = useRef(null);
-    const isLaptopOrHigher = useMediaQuery('(min-width: 1024px)');
-    const [showAllUsers, setShowAllUsers] = useState(isLaptopOrHigher);
+
     const [receiver, setReceiver] = useState('');
     const [translationsAvailable, setTranslationsAvailable] = useState(true);
     const [receiverName, setReceiverName] = useState('');
@@ -42,6 +42,8 @@ const Chat = () => {
     const [targetLanguage, setTargetLanguage] = useState('en');
     const [showThemeSelector, setShowThemeSelector] = useState(false);
     const [selectedThemes, setSelectedThemes] = useState({}); // State to manage themes per user
+    const [isChatMaximized, setIsChatMaximized] = useState(false);
+    const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 991);
     const theme = useTheme();
     const { mode } = useContext(ColorModeContext);
 
@@ -51,13 +53,19 @@ const Chat = () => {
         }
     }, [chatHistory]);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsSmallScreen(window.innerWidth <= 991);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const handleToggleUsers = () => {
-        if (!isLaptopOrHigher) {
-            setShowAllUsers(true);
+        setIsChatMaximized(false);
+        if (isSmallScreen) {
             setReceiver('');
             setReceiverName('');
-        } else {
-            setShowAllUsers(prevState => !prevState);
         }
     };
 
@@ -190,7 +198,7 @@ const Chat = () => {
 
             const data = { sender, receiver, message, targetLanguage };
 
-            const res = await axios.post('${process.env.REACT_APP_URI}/api/chat/send', data, config);
+            const res = await axios.post(`${process.env.REACT_APP_URI}/api/chat/send`, data, config);
             // Check if translations are available
             const translationsAvailable = res.data.translationsAvailable;
 
@@ -205,9 +213,6 @@ const Chat = () => {
                 fetchChatHistory(receiver);
             } else {
                 setError(null); // Clear any previous error
-                // Handle case where translations are not available
-                // For example, you could show a message or disable language selection
-                // Here, we are disabling language selection
                 setTargetLanguage('en'); // Reset to default language
             }
         } catch (err) {
@@ -219,11 +224,7 @@ const Chat = () => {
     const handleUserClick = (userId, userName) => {
         setReceiver(userId);
         setReceiverName(userName);
-        if (isLaptopOrHigher) {
-            setShowAllUsers(true);
-        } else {
-            setShowAllUsers(false);
-        }
+        setIsChatMaximized(true);
     };
 
     const handleImageUpload = async () => {
@@ -250,7 +251,7 @@ const Chat = () => {
             formData.append('receiver', receiver);
             formData.append('image', imageFile);
 
-            const res = await axios.post('${process.env.REACT_APP_URI}/api/chat/image', formData, {
+            const res = await axios.post(`${process.env.REACT_APP_URI}/api/chat/image`, formData, {
                 headers: {
                     ...config.headers,
                     'Content-Type': 'multipart/form-data',
@@ -292,7 +293,7 @@ const Chat = () => {
             formData.append('receiver', receiver);
             formData.append('file', docFile);
 
-            const res = await axios.post('${process.env.REACT_APP_URI}/api/chat/docs', formData, {
+            const res = await axios.post(`${process.env.REACT_APP_URI}/api/chat/docs`, formData, {
                 headers: {
                     ...config.headers,
                     'Content-Type': 'multipart/form-data',
@@ -339,15 +340,16 @@ const Chat = () => {
 
     return (
         <div className="chat-container flex flex-col h-screen" style={{ outline: `2px solid ${theme.palette.divider}` }}>
-            {isLaptopOrHigher ? (
-                <Box className="flex flex-grow">
-                    {showAllUsers && (
-                        <Box className="chat-sidebar w-1/4 p-4" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
-                            <Allusers handleUserClick={handleUserClick} selectedUser={receiver} />
-                        </Box>
-                    )}
-                    <Box className={`chat-main flex flex-col ${showAllUsers ? 'w-3/4' : 'w-full'}`} style={{ outline: `1px solid ${theme.palette.divider}` }}>
-                        {receiver && (
+
+            <Box className="flex flex-grow">
+                {(!isChatMaximized || !isSmallScreen) && (
+                    <Box className={`chat-sidebar ${isSmallScreen ? 'w-full' : 'w-1/4'} p-4`} style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
+                        <Allusers handleUserClick={handleUserClick} selectedUser={receiver} />
+                    </Box>
+                )}
+                {(isChatMaximized || !isSmallScreen) && (
+                    <Box className={`chat-main flex flex-col ${isChatMaximized ? 'w-full' : 'w-3/4'}`} style={{ outline: `1px solid ${theme.palette.divider}` }}>
+                        {receiver ? (
                             <>
                                 <Box className="flex-none p-4 flex items-center justify-between" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
                                     <IconButton onClick={handleToggleUsers}>
@@ -561,230 +563,14 @@ const Chat = () => {
                                 </Box>
                                 <Notify userId={getUserIdFromToken()} />
                             </>
+                        ) : (
+                            <Box className="flex items-center justify-center h-full">
+                                <Typography variant="h6">Select a user to start chatting</Typography>
+                            </Box>
                         )}
                     </Box>
-                </Box>
-            ) : (
-                <Box className="chat-all-users flex flex-col h-screen" style={{ outline: `2px solid ${theme.palette.divider}` }}>
-                    {showAllUsers ? (
-                        <Allusers handleUserClick={handleUserClick} selectedUser={receiver} />
-                    ) : receiver && (
-                        <Box className="chat-main flex flex-col w-full" style={{ outline: `1px solid ${theme.palette.divider}` }}>
-                            <Box className="flex-none p-4 flex items-center justify-between" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
-                                <IconButton onClick={handleToggleUsers}>
-                                    <ArrowBackIcon />
-                                </IconButton>
-                                <Typography
-                                    variant="h6"
-                                    component="h2"
-                                    sx={{
-                                        borderBottom: `2px solid ${theme.palette.divider}`,
-                                        paddingBottom: theme.spacing(1),
-                                        marginBottom: theme.spacing(2),
-                                        display: 'inline-block',
-                                        width: '100%',
-                                        color: mode === 'dark' ? '#fff' : '#000',
-                                    }}
-                                >
-                                    Chat with {receiverName}
-                                </Typography>
-                                <Box>
-                                    <IconButton onClick={handleOpenPopover}>
-                                        <PaletteIcon />
-                                    </IconButton>
-                                    <Popover
-                                        open={Boolean(popoverAnchorEl)}
-                                        anchorEl={popoverAnchorEl}
-                                        onClose={handleClosePopover}
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'right',
-                                        }}
-                                        transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'right',
-                                        }}
-                                    >
-                                        <Box sx={{ p: 2, minWidth: '200px', maxHeight: '300px', overflowY: 'auto' }}>
-                                            {themeOptions.map((option, index) => (
-                                                <Box
-                                                    key={index}
-                                                    sx={{
-                                                        backgroundColor: option.backgroundColor,
-                                                        color: option.textColor,
-                                                        padding: '8px',
-                                                        borderRadius: '4px',
-                                                        cursor: 'pointer',
-                                                        marginBottom: '4px',
-                                                    }}
-                                                    onClick={() => handleThemeSelect(option)}
-                                                >
-                                                    {option.name}
-                                                </Box>
-                                            ))}
-                                        </Box>
-                                    </Popover>
-                                </Box>
-                            </Box>
-
-                            <animated.div
-                                ref={chatHistoryRef}
-                                className="chat-history flex-grow overflow-y-auto overflow-x-hidden mb-4 flex flex-col relative p-4"
-                                style={{
-                                    ...chatHistoryAnimation,
-                                    backgroundColor: selectedThemes[receiver] ? selectedThemes[receiver].backgroundColor : theme.palette.background.default,
-                                    maxHeight: 'calc(100vh - 200px)',
-                                }}
-                            >
-                                {chatHistory[receiver]?.map((chat, index) => {
-                                    if (!chat.message && !chat.voiceMessageUrl && !chat.imageUrl && !chat.docUrl) return null;
-
-                                    return (
-                                        <div key={chat._id} className={`chat-message-wrapper ${chat.sender === getUserIdFromToken() ? 'self-end' : 'self-start'}`}>
-                                            {index === 0 || new Date(chat.createdAt).toDateString() !== new Date(chatHistory[receiver][index - 1].createdAt).toDateString() ? (
-                                                <div className="chat-date-divider text-center my-2">
-                                                    <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
-                                                    <span className="date-divider-text px-2 rounded-full" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa' }}>
-                                                        {formatDate(chat.createdAt)}
-                                                    </span>
-                                                    <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
-                                                </div>
-                                            ) : null}
-                                            <div
-                                                className={`chat-message ${chat.sender === getUserIdFromToken() ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-lg p-2 max-w-xs break-words`}
-                                                style={{
-                                                    backgroundColor: chat.sender === getUserIdFromToken() ? theme.palette.primary.main : (mode === 'dark' ? theme.palette.background.paper : theme.palette.background.default),
-                                                    color: chat.sender === getUserIdFromToken() ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                                                    wordWrap: 'break-word',
-                                                    overflowWrap: 'break-word',
-                                                    whiteSpace: 'pre-wrap',
-                                                }}
-                                            >
-                                                {(chat.message && chat.message.trim() !== '') || chat.voiceMessageUrl || chat.imageUrl || chat.docUrl ? (
-                                                    <>
-                                                        {chat.message && chat.message.trim() !== '' ? (
-                                                            <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
-                                                        ) : chat.voiceMessageUrl ? (
-                                                            <audio controls>
-                                                                <source src={`${process.env.REACT_APP_URI}${chat.voiceMessageUrl}`} type="audio/webm" />
-                                                                Your browser does not support the audio element.
-                                                            </audio>
-                                                        ) : chat.imageUrl ? (
-                                                            <img src={`${process.env.REACT_APP_URI}${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
-                                                        ) : chat.docUrl ? (
-                                                            <div>
-                                                                <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
-                                                                <a href={`${process.env.REACT_APP_URI}${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
-                                                                    {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
-                                                                </a>
-                                                            </div>
-                                                        ) : null}
-                                                    </>
-                                                ) : (
-                                                    <span style={{ color: 'gray', fontSize: '12px' }}>Empty message</span>
-                                                )}
-                                            </div>
-                                            <div className="chat-timestamp text-xs mt-1" style={{ color: theme.palette.text.secondary }}>
-                                                {formatTimestamp(chat.createdAt)}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </animated.div>
-                            <Box className="chat-input flex items-center p-4" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
-                                <TextField
-                                    className="flex-grow mr-2"
-                                    placeholder="Type your message"
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    variant="outlined"
-                                    InputProps={{
-                                        style: {
-                                            backgroundColor: mode === 'dark' ? '#424242' : '#fff',
-                                            color: mode === 'dark' ? '#fff' : '#000',
-                                            fontSize: "0.875rem",
-                                        },
-                                        endAdornment: (
-                                            <IconButton onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-                                                <EmojiEmotionsIcon />
-                                            </IconButton>
-                                        ),
-                                    }}
-                                />
-                                {showEmojiPicker && (
-                                    <Box position="absolute" zIndex="tooltip" bottom="70px" right="20px">
-                                        <EmojiPicker
-                                            key={mode}
-                                            onEmojiClick={handleEmojiClick}
-                                            theme={mode === 'dark' ? 'dark' : 'light'}
-                                            emojiStyle="native"
-                                            width={300}
-                                            height={400}
-                                        />
-                                    </Box>
-                                )}
-                                {!translationsAvailable ? (
-                                    <Typography variant="body2" color="textSecondary">
-                                        Translations not available
-                                    </Typography>
-                                ) : (
-                                    <Select
-                                        value={targetLanguage}
-                                        onChange={(e) => setTargetLanguage(e.target.value)}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Without label' }}
-                                        style={{ marginRight: '8px', backgroundColor: mode === 'dark' ? '#424242' : '#fff' }}
-                                    >
-                                        <MenuItem value="en">English</MenuItem>
-                                        <MenuItem value="fr">French</MenuItem>
-                                        <MenuItem value="es">Spanish</MenuItem>
-                                        <MenuItem value="de">German</MenuItem>
-                                        <MenuItem value="it">Italian</MenuItem>
-                                        <MenuItem value="pt">Portuguese</MenuItem>
-                                        <MenuItem value="ru">Russian</MenuItem>
-                                    </Select>
-                                )}
-                                <IconButton onClick={() => setShowAttachmentIcons(!showAttachmentIcons)}>
-                                    <AttachFileIcon />
-                                </IconButton>
-                                {showAttachmentIcons && (
-                                    <>
-                                        <IconButton component="label">
-                                            <ImageIcon />
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                hidden
-                                                onChange={(e) => setImageFile(e.target.files[0])}
-                                            />
-                                        </IconButton>
-                                        <IconButton component="label">
-                                            <DescriptionIcon />
-                                            <input
-                                                type="file"
-                                                accept="application/pdf"
-                                                hidden
-                                                onChange={(e) => setDocFile(e.target.files[0])}
-                                            />
-                                        </IconButton>
-                                    </>
-                                )}
-                                <IconButton
-                                    color="primary"
-                                    onClick={imageFile ? handleImageUpload : docFile ? handleDocUpload : handleSendMessage}
-                                    disabled={!(imageFile || docFile || message)}
-                                >
-                                    <SendIcon />
-                                </IconButton>
-                                <Box className="voice-message-recorder">
-                                    <VoiceMessage sender={getUserIdFromToken()} receiver={receiver} onMessageSent={() => fetchChatHistory(receiver)} />
-                                </Box>
-                            </Box>
-                            <Notify userId={getUserIdFromToken()} />
-                        </Box>
-                    )}
-                </Box>
-            )}
+                )}
+            </Box>
         </div>
     );
 };

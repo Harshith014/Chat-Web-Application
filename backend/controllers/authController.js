@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const cloudinary = require('../cloudinary');
 
 const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
@@ -91,10 +92,15 @@ const updateProfile = async (req, res) => {
     const { username, email } = req.body;
 
     const updateFields = { username, email };
+    let imageUrl = null;
 
+    // Upload the image to Cloudinary if included in the request
     if (req.file) {
-        updateFields.avatar = `/uploads/${req.file.filename}`;
+        const result = await cloudinary.uploader.upload(req.file.path);
+        imageUrl = result.secure_url;
     }
+
+
 
     try {
         const user = await User.findByIdAndUpdate(
