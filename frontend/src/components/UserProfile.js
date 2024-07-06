@@ -138,7 +138,7 @@ const UserProfile = () => {
                 <Grid container spacing={4} justifyContent="center">
                     <Grid item xs={12} md={6}>
                         <StyledAvatar
-                            src={previewUrl || (userProfile.avatar ? `${process.env.REACT_APP_URI}${userProfile.avatar}` : null)}
+                            src={previewUrl || userProfile.avatar}
                             alt={userProfile.username}
                         >
                             {!previewUrl && !userProfile.avatar && <AccountCircleIcon fontSize="large" />}
