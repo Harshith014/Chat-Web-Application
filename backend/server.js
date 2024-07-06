@@ -15,7 +15,7 @@ connectDB();
 const app = express();
 
 app.use(cors({
-    origin: ["https://chat-app-mkfi.onrender.com"],
+    origin: ["https://chat-app-1-gq5y.onrender.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
 }));
@@ -23,7 +23,7 @@ app.use(cors({
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: ["https://chat-app-mkfi.onrender.com"],
+        origin: ["https://chat-app-1-gq5y.onrender.com"],
         methods: ["GET", "POST", "PUT", "DELETE"],
         credentials: true,
     }
