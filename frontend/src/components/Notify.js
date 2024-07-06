@@ -14,7 +14,7 @@ const Notify = ({ userId }) => {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get(`https://chat-app-mkfi.onrender.com/api/notifications/${userId}`);
+                const response = await axios.get(`${process.env.REACT_APP_URI}/api/notifications/${userId}`);
                 setNotifications(response.data.data);
                 setLoading(false);
             } catch (err) {
@@ -27,7 +27,7 @@ const Notify = ({ userId }) => {
     }, [userId]);
 
     useEffect(() => {
-        const socket = io('https://chat-app-mkfi.onrender.com', {
+        const socket = io(process.env.REACT_APP_URI, {
             transports: ['websocket'],
             auth: {
                 token: localStorage.getItem('token'),

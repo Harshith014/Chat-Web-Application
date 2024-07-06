@@ -40,8 +40,7 @@ const Register = () => {
         }
 
         try {
-            const { data } = await axios.post('https://chat-app-mkfi.onrender.com/api/auth/register', formData);
-            console.log(data); // Handle success response here
+            const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/registe`, formData);
             navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {
             console.error(error.response.data);

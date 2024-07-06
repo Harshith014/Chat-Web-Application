@@ -9,6 +9,7 @@ import Register from './components/Register';
 import UserProfile from './components/UserProfile';
 import { ColorModeContext, ThemeContextProvider } from './context/ThemeContext';
 
+
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();

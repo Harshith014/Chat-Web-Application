@@ -33,7 +33,7 @@ const Allusers = ({ handleUserClick = () => { }, selectedUser }) => {
             }
 
             try {
-                const response = await axios.get(`https://chat-app-mkfi.onrender.com/api/auth/users/${userId}`, config);
+                const response = await axios.get(`${process.env.REACT_APP_URI}/api/auth/users/${userId}`, config);
                 setUsers([chatbotUser, ...response.data]);
                 setLoading(false);
             } catch (err) {

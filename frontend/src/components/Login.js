@@ -39,7 +39,7 @@ const Login = () => {
         }
 
         try {
-            const { data } = await axios.post('https://chat-app-mkfi.onrender.com/api/auth/login', formData);
+            const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/login`, formData);
             localStorage.setItem('token', data.token);
             navigate('/chat');
         } catch (error) {

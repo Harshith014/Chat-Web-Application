@@ -75,11 +75,17 @@ const Chat = () => {
                 return;
             }
 
-            const response = await axios.get(`https://chat-app-mkfi.onrender.com/api/chat/theme?sender=${userId}&receiver=${receiver}`);
+            const response = await axios.get(`${process.env.REACT_APP_URI}/api/chat/theme?sender=${userId}&receiver=${receiver}`);
             const themeFromDB = response.data.theme;
+
             setSelectedThemes((prevThemes) => ({ ...prevThemes, [receiver]: themeFromDB }));
         } catch (error) {
-            console.error(error);
+            if (error.response && error.response.status === 404) {
+                console.log('...');
+                setSelectedThemes((prevThemes) => ({ ...prevThemes, [receiver]: 'defaultTheme' }));
+            } else {
+                console.error(error);
+            }
         }
     };
 
@@ -87,6 +93,7 @@ const Chat = () => {
         setSelectedThemes((prevThemes) => ({ ...prevThemes, [receiver]: theme }));
         setShowThemeSelector(false);
         saveThemeToDB(theme);
+        setMessage('');
     };
 
     const saveThemeToDB = async (theme) => {
@@ -97,7 +104,7 @@ const Chat = () => {
                 return;
             }
 
-            await axios.post(`https://chat-app-mkfi.onrender.com/api/chat/theme`, { sender: userId, receiver: receiver, theme });
+            await axios.post(`${process.env.REACT_APP_URI}/api/chat/theme`, { sender: userId, receiver: receiver, theme });
         } catch (error) {
             console.error(error);
         }
@@ -140,13 +147,20 @@ const Chat = () => {
             }
             const senderId = userId;
 
-            const res = await axios.get(`https://chat-app-mkfi.onrender.com/api/chat/${senderId}/${receiverId}`, config);
+            const res = await axios.get(`${process.env.REACT_APP_URI}/api/chat/${senderId}/${receiverId}`, config);
 
-            // Update chat history for the specific receiver
-            setChatHistory(prevChatHistory => ({
-                ...prevChatHistory,
-                [receiverId]: res.data.data,
-            }));
+            if (res.data.data.length === 0) {
+                console.log('...');
+                setChatHistory(prevChatHistory => ({
+                    ...prevChatHistory,
+                    [receiverId]: [], // or some default value
+                }));
+            } else {
+                setChatHistory(prevChatHistory => ({
+                    ...prevChatHistory,
+                    [receiverId]: res.data.data,
+                }));
+            }
         } catch (err) {
             setError(err.message || 'An error occurred while fetching chat history');
         }
@@ -159,6 +173,7 @@ const Chat = () => {
     }, [receiver]);
 
     const handleSendMessage = async () => {
+        if (!message) return;
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -175,7 +190,7 @@ const Chat = () => {
 
             const data = { sender, receiver, message, targetLanguage };
 
-            const res = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/send', data, config);
+            const res = await axios.post('${process.env.REACT_APP_URI}/api/chat/send', data, config);
             // Check if translations are available
             const translationsAvailable = res.data.translationsAvailable;
 
@@ -235,7 +250,7 @@ const Chat = () => {
             formData.append('receiver', receiver);
             formData.append('image', imageFile);
 
-            const res = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/image', formData, {
+            const res = await axios.post('${process.env.REACT_APP_URI}/api/chat/image', formData, {
                 headers: {
                     ...config.headers,
                     'Content-Type': 'multipart/form-data',
@@ -277,7 +292,7 @@ const Chat = () => {
             formData.append('receiver', receiver);
             formData.append('file', docFile);
 
-            const res = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/docs', formData, {
+            const res = await axios.post('${process.env.REACT_APP_URI}/api/chat/docs', formData, {
                 headers: {
                     ...config.headers,
                     'Content-Type': 'multipart/form-data',
@@ -400,50 +415,60 @@ const Chat = () => {
                                         maxHeight: 'calc(100vh - 200px)',
                                     }}
                                 >
-                                    {chatHistory[receiver]?.map((chat, index) => (
-                                        <div key={chat._id} className={`chat-message-wrapper ${chat.sender === getUserIdFromToken() ? 'self-end' : 'self-start'}`}>
-                                            {index === 0 || new Date(chat.createdAt).toDateString() !== new Date(chatHistory[receiver][index - 1].createdAt).toDateString() ? (
-                                                <div className="chat-date-divider text-center my-2">
-                                                    <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
-                                                    <span className="date-divider-text px-2 rounded-full" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa' }}>
-                                                        {formatDate(chat.createdAt)}
-                                                    </span>
-                                                    <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
-                                                </div>
-                                            ) : null}
-                                            <div
-                                                className={`chat-message ${chat.sender === getUserIdFromToken() ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-lg p-2 max-w-xs break-words`}
-                                                style={{
-                                                    backgroundColor: chat.sender === getUserIdFromToken() ? theme.palette.primary.main : (mode === 'dark' ? theme.palette.background.paper : theme.palette.background.default),
-                                                    color: chat.sender === getUserIdFromToken() ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                                                    wordWrap: 'break-word',
-                                                    overflowWrap: 'break-word',
-                                                    whiteSpace: 'pre-wrap',
-                                                }}
-                                            >
-                                                {chat.message ? (
-                                                    <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
-                                                ) : chat.voiceMessageUrl ? (
-                                                    <audio controls>
-                                                        <source src={chat.voiceMessageUrl} type="audio/webm" />
-                                                        Your browser does not support the audio element.
-                                                    </audio>
-                                                ) : chat.imageUrl ? (
-                                                    <img src={chat.imageUrl} alt="pic" className="max-w-full h-auto" />
-                                                ) : chat.docUrl ? (
-                                                    <div>
-                                                        <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
-                                                        <a href={chat.docUrl} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
-                                                            {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
-                                                        </a>
+                                    {chatHistory[receiver]?.map((chat, index) => {
+                                        if (!chat.message && !chat.voiceMessageUrl && !chat.imageUrl && !chat.docUrl) return null;
+
+                                        return (
+                                            <div key={chat._id} className={`chat-message-wrapper ${chat.sender === getUserIdFromToken() ? 'self-end' : 'self-start'}`}>
+                                                {index === 0 || new Date(chat.createdAt).toDateString() !== new Date(chatHistory[receiver][index - 1].createdAt).toDateString() ? (
+                                                    <div className="chat-date-divider text-center my-2">
+                                                        <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
+                                                        <span className="date-divider-text px-2 rounded-full" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa' }}>
+                                                            {formatDate(chat.createdAt)}
+                                                        </span>
+                                                        <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
                                                     </div>
                                                 ) : null}
+                                                <div
+                                                    className={`chat-message ${chat.sender === getUserIdFromToken() ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-lg p-2 max-w-xs break-words`}
+                                                    style={{
+                                                        backgroundColor: chat.sender === getUserIdFromToken() ? theme.palette.primary.main : (mode === 'dark' ? theme.palette.background.paper : theme.palette.background.default),
+                                                        color: chat.sender === getUserIdFromToken() ? theme.palette.primary.contrastText : theme.palette.text.primary,
+                                                        wordWrap: 'break-word',
+                                                        overflowWrap: 'break-word',
+                                                        whiteSpace: 'pre-wrap',
+                                                    }}
+                                                >
+                                                    {(chat.message && chat.message.trim() !== '') || chat.voiceMessageUrl || chat.imageUrl || chat.docUrl ? (
+                                                        <>
+                                                            {chat.message && chat.message.trim() !== '' ? (
+                                                                <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
+                                                            ) : chat.voiceMessageUrl ? (
+                                                                <audio controls>
+                                                                    <source src={`${process.env.REACT_APP_URI}${chat.voiceMessageUrl}`} type="audio/webm" />
+                                                                    Your browser does not support the audio element.
+                                                                </audio>
+                                                            ) : chat.imageUrl ? (
+                                                                <img src={`${process.env.REACT_APP_URI}${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
+                                                            ) : chat.docUrl ? (
+                                                                <div>
+                                                                    <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
+                                                                    <a href={`${process.env.REACT_APP_URI}${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
+                                                                        {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
+                                                                    </a>
+                                                                </div>
+                                                            ) : null}
+                                                        </>
+                                                    ) : (
+                                                        <span style={{ color: 'gray', fontSize: '12px' }}>Empty message</span>
+                                                    )}
+                                                </div>
+                                                <div className="chat-timestamp text-xs mt-1" style={{ color: theme.palette.text.secondary }}>
+                                                    {formatTimestamp(chat.createdAt)}
+                                                </div>
                                             </div>
-                                            <div className="chat-timestamp text-xs mt-1" style={{ color: theme.palette.text.secondary }}>
-                                                {formatTimestamp(chat.createdAt)}
-                                            </div>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </animated.div>
                                 <Box className="chat-input flex items-center p-4" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
                                     <TextField
@@ -611,50 +636,60 @@ const Chat = () => {
                                     maxHeight: 'calc(100vh - 200px)',
                                 }}
                             >
-                                {chatHistory[receiver]?.map((chat, index) => (
-                                    <div key={chat._id} className={`chat-message-wrapper ${chat.sender === getUserIdFromToken() ? 'self-end' : 'self-start'}`}>
-                                        {index === 0 || new Date(chat.createdAt).toDateString() !== new Date(chatHistory[receiver][index - 1].createdAt).toDateString() ? (
-                                            <div className="chat-date-divider text-center my-2">
-                                                <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
-                                                <span className="date-divider-text px-2 rounded-full" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa' }}>
-                                                    {formatDate(chat.createdAt)}
-                                                </span>
-                                                <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
-                                            </div>
-                                        ) : null}
-                                        <div
-                                            className={`chat-message ${chat.sender === getUserIdFromToken() ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-lg p-2 max-w-xs break-words`}
-                                            style={{
-                                                backgroundColor: chat.sender === getUserIdFromToken() ? theme.palette.primary.main : (mode === 'dark' ? theme.palette.background.paper : theme.palette.background.default),
-                                                color: chat.sender === getUserIdFromToken() ? theme.palette.primary.contrastText : theme.palette.text.primary,
-                                                wordWrap: 'break-word',
-                                                overflowWrap: 'break-word',
-                                                whiteSpace: 'pre-wrap',
-                                            }}
-                                        >
-                                            {chat.message ? (
-                                                <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
-                                            ) : chat.voiceMessageUrl ? (
-                                                <audio controls>
-                                                    <source src={`https://chat-app-mkfi.onrender.com${chat.voiceMessageUrl}`} type="audio/webm" />
-                                                    Your browser does not support the audio element.
-                                                </audio>
-                                            ) : chat.imageUrl ? (
-                                                <img src={`https://chat-app-mkfi.onrender.com${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
-                                            ) : chat.docUrl ? (
-                                                <div>
-                                                    <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
-                                                    <a href={`https://chat-app-mkfi.onrender.com${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
-                                                        {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
-                                                    </a>
+                                {chatHistory[receiver]?.map((chat, index) => {
+                                    if (!chat.message && !chat.voiceMessageUrl && !chat.imageUrl && !chat.docUrl) return null;
+
+                                    return (
+                                        <div key={chat._id} className={`chat-message-wrapper ${chat.sender === getUserIdFromToken() ? 'self-end' : 'self-start'}`}>
+                                            {index === 0 || new Date(chat.createdAt).toDateString() !== new Date(chatHistory[receiver][index - 1].createdAt).toDateString() ? (
+                                                <div className="chat-date-divider text-center my-2">
+                                                    <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
+                                                    <span className="date-divider-text px-2 rounded-full" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa' }}>
+                                                        {formatDate(chat.createdAt)}
+                                                    </span>
+                                                    <hr className="date-divider-line border-t my-1" style={{ borderColor: theme.palette.divider }} />
                                                 </div>
                                             ) : null}
+                                            <div
+                                                className={`chat-message ${chat.sender === getUserIdFromToken() ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-lg p-2 max-w-xs break-words`}
+                                                style={{
+                                                    backgroundColor: chat.sender === getUserIdFromToken() ? theme.palette.primary.main : (mode === 'dark' ? theme.palette.background.paper : theme.palette.background.default),
+                                                    color: chat.sender === getUserIdFromToken() ? theme.palette.primary.contrastText : theme.palette.text.primary,
+                                                    wordWrap: 'break-word',
+                                                    overflowWrap: 'break-word',
+                                                    whiteSpace: 'pre-wrap',
+                                                }}
+                                            >
+                                                {(chat.message && chat.message.trim() !== '') || chat.voiceMessageUrl || chat.imageUrl || chat.docUrl ? (
+                                                    <>
+                                                        {chat.message && chat.message.trim() !== '' ? (
+                                                            <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
+                                                        ) : chat.voiceMessageUrl ? (
+                                                            <audio controls>
+                                                                <source src={`${process.env.REACT_APP_URI}${chat.voiceMessageUrl}`} type="audio/webm" />
+                                                                Your browser does not support the audio element.
+                                                            </audio>
+                                                        ) : chat.imageUrl ? (
+                                                            <img src={`${process.env.REACT_APP_URI}${chat.imageUrl}`} alt="pic" className="max-w-full h-auto" />
+                                                        ) : chat.docUrl ? (
+                                                            <div>
+                                                                <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
+                                                                <a href={`${process.env.REACT_APP_URI}${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
+                                                                    {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
+                                                                </a>
+                                                            </div>
+                                                        ) : null}
+                                                    </>
+                                                ) : (
+                                                    <span style={{ color: 'gray', fontSize: '12px' }}>Empty message</span>
+                                                )}
+                                            </div>
+                                            <div className="chat-timestamp text-xs mt-1" style={{ color: theme.palette.text.secondary }}>
+                                                {formatTimestamp(chat.createdAt)}
+                                            </div>
                                         </div>
-                                        <div className="chat-timestamp text-xs mt-1" style={{ color: theme.palette.text.secondary }}>
-                                            {formatTimestamp(chat.createdAt)}
-                                        </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </animated.div>
                             <Box className="chat-input flex items-center p-4" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
                                 <TextField

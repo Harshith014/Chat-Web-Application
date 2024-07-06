@@ -31,8 +31,7 @@ const VoiceMessage = ({ sender, receiver, onMessageSent }) => {
                     'Content-Type': 'multipart/form-data',
                 },
             };
-            const response = await axios.post('https://chat-app-mkfi.onrender.com/api/chat/voice-message', formData, config);
-            console.log(response.data);
+            const response = await axios.post(`${process.env.REACT_APP_URI}/api/chat/voice-message`, formData, config);
             alert('Voice message sent successfully');
             onMessageSent();
         } catch (error) {
@@ -59,13 +58,6 @@ const VoiceMessage = ({ sender, receiver, onMessageSent }) => {
                 {uploading ? 'Uploading...' : 'Send'}
             </button>
 
-            {/* Display the recorded audio if available */}
-            {/* {blob && (
-                <audio controls>
-                    <source src={URL.createObjectURL(blob)} type="audio/webm" />
-                    Your browser does not support the audio element.
-                </audio>
-            )} */}
         </div>
     );
 };
