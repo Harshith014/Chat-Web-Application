@@ -98,9 +98,8 @@ const updateProfile = async (req, res) => {
     if (req.file) {
         const result = await cloudinary.uploader.upload(req.file.path);
         imageUrl = result.secure_url;
+        updateFields.avatar = imageUrl; // Update the avatar field with the Cloudinary URL
     }
-
-
 
     try {
         const user = await User.findByIdAndUpdate(
