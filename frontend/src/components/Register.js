@@ -40,7 +40,7 @@ const Register = () => {
         }
 
         try {
-            const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/registe`, formData);
+            const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/register`, formData);
             navigate('/login'); // Redirect to login page after successful registration
         } catch (error) {
             console.error(error.response.data);
