@@ -68,7 +68,7 @@
 /* Extra small screens (mobiles) */
 @media (max-width: 767px) {
   .chat-main {
-    height: 40rem;
+    height: 42rem;
   }
   .chat-history {
     max-height: calc(100vh - 100px);
