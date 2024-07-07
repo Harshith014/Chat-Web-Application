@@ -71,6 +71,9 @@
   .chat-main {
     height: 42rem;
   }
+  .chat-container {
+    height: 30rem;
+  }
   .chat-history {
     max-height: calc(100vh - 100px);
   }
