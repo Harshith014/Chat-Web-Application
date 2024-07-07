@@ -74,8 +74,11 @@
     max-height: calc(100vh - 100px);
   }
   .chat-input {
+    height: 133px;
     padding: 4px;
     display: flex;
     flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
   }
 }
