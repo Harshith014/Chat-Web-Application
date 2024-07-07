@@ -447,7 +447,7 @@ const Chat = () => {
                                                                 <span style={{ wordBreak: 'break-word' }}>{chat.message}</span>
                                                             ) : chat.voiceMessageUrl ? (
                                                                 <audio controls>
-                                                                    <source src={`${process.env.REACT_APP_URI}${chat.voiceMessageUrl}`} type="audio/webm" />
+                                                                    <source src={chat.voiceMessageUrl} type="audio/webm" />
                                                                     Your browser does not support the audio element.
                                                                 </audio>
                                                             ) : chat.imageUrl ? (
@@ -455,7 +455,7 @@ const Chat = () => {
                                                             ) : chat.docUrl ? (
                                                                 <div>
                                                                     <DescriptionIcon style={{ verticalAlign: 'iddle', marginRight: '4px' }} />
-                                                                    <a href={`${process.env.REACT_APP_URI}${chat.docUrl}`} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
+                                                                    <a href={chat.docUrl} target="_blank" rel="noopener noreferrer" style={{ color: mode === 'dark' ? '#fff' : theme.palette.primary.main }}>
                                                                         {chat.docUrl.substring(chat.docUrl.lastIndexOf('/') + 1)}
                                                                     </a>
                                                                 </div>
