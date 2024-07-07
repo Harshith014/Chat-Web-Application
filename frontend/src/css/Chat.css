@@ -66,19 +66,17 @@
 }
 
 /* Extra small screens (mobiles) */
+/* Extra small screens (mobiles) */
 @media (max-width: 767px) {
   .chat-main {
-    height: 40rem;
+    display: flex;
+    flex-direction: column;
   }
   .chat-history {
-    max-height: calc(100vh - 100px);
+    flex-grow: 1;
+    overflow-y: auto;
   }
   .chat-input {
-    height: 133px;
     padding: 4px;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
   }
 }
