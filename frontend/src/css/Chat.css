@@ -2,6 +2,7 @@
 .chat-container {
   font-size: 16px;
   line-height: 1.5;
+  height: 100vh;
 }
 
 /* All screen sizes */
@@ -18,7 +19,7 @@
 }
 
 .chat-history {
-  max-height: calc(100vh - 250px);
+  max-height: calc(100vh - 120px);
 }
 
 .chat-input {
@@ -66,7 +67,7 @@
 }
 
 /* Extra small screens (mobiles) */
-@media (max-width: 767px) {
+@media (max-width: 767px) and (min-resolution: 2dppx){
   .chat-main {
     height: 42rem;
   }
