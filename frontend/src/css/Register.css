@@ -1,156 +1,173 @@
-/* Global styles */
+/* Register.css */
+
 .register-container {
-    position: relative;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .register-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.5);
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.register-content.dark {
-    background-color: rgba(0, 0, 0, 0.5);
+.bluebox {
+  background-color: #3498db;
+  color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 600px;
 }
 
 .register-box {
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    background-color: #fff;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
 }
 
 .register-box.dark {
-    background-color: #2d2d2d;
-    color: #fff;
+  background-color: #2d2d2d;
+  color: white;
 }
 
-.register-box .MuiInputLabel-root {
-    color: #9e9e9e;
+.custom-input {
+  margin-bottom: 1rem;
 }
 
-.register-box.dark .MuiInputLabel-root {
-    color: #bdbdbd;
+.custom-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
-.register-box .MuiInputBase-input {
-    color: #000;
+.input-wrapper {
+  position: relative;
 }
 
-.register-box.dark .MuiInputBase-input {
-    color: #fff;
+.input-wrapper input {
+  width: 100%;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
-.dark-input .MuiInputBase-input {
-    color: white !important;
+.input-icon {
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
 }
 
-.dark-input .MuiOutlinedInput-notchedOutline {
-    border-color: rgba(255, 255, 255, 0.23) !important;
+.animated-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.dark-input:hover .MuiOutlinedInput-notchedOutline {
-    border-color: rgba(255, 255, 255, 0.87) !important;
+.animated-button:hover {
+  background-color: #2980b9;
 }
 
-.dark-input.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #1976d2 !important;
+.error-message {
+  color: #e74c3c;
+  margin-bottom: 1rem;
 }
 
-/* Large screens (desktops) */
-@media (min-width: 1200px) {
-    .register-box {
-        width: 50%;
-    }
-    .register-box h3 {
-        font-size: 2.5rem;
-    }
-    .register-box h4 {
-        font-size: 2rem;
-    }
-    .register-box p {
-        font-size: 1.25rem;
-    }
+.login-link {
+  margin-top: 1rem;
+  text-align: center;
 }
 
-/* Medium screens (laptops) */
-@media (min-width: 992px) and (max-width: 1199px) {
-    .register-box {
-        width: 60%;
-    }
-    .register-box h3 {
-        font-size: 2rem;
-    }
-    .register-box h4 {
-        font-size: 1.75rem;
-    }
-    .register-box p {
-        font-size: 1rem;
-    }
+.login-link span {
+  color: #3498db;
+  cursor: pointer;
 }
 
-/* Small screens (tablets) */
-@media (min-width: 768px) and (max-width: 991px) {
-    .bluebox {
-        width: 90%;
-    }
-    .register-box {
-        width: 75%;
-    }
-    .register-box h3 {
-        font-size: 1.75rem;
-    }
-    .register-box h4 {
-        font-size: 1.5rem;
-    }
-    .register-box p {
-        font-size: 0.875rem;
-    }
+.theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-/* Extra small screens (mobiles) */
-@media (max-width: 767px) {
-    .bluebox {
-        width: 94%;
-    }
-    .bluebox h3 {
-        font-size: 30px;
-    }
-    .bluebox p {
-        font-size: 15px;
-    }
-    .register-box {
-        width: 85%;
-        padding: 1rem;
-    }
-    .register-box h3 {
-        font-size: 30px;
-    }
-    .register-box h4 {
-        font-size: 27px;
-    }
-    .register-box p {
-        font-size: 15px;
-    }
-    .register-box .MuiInputLabel-root {
-        font-size: 0.75rem;
-    }
-    .register-box .MuiInputBase-input {
-        font-size: 0.875rem;
-    }
-    .register-box button {
-        font-size: 0.875rem;
-    }
+/* Responsive styles */
+@media (max-width: 768px) {
+  .register-content {
+    padding: 1rem;
+  }
+
+  .bluebox {
+    padding: 1.5rem;
+  }
+
+  .register-box {
+    padding: 1.5rem;
+  }
+
+  .bluebox h3 {
+    font-size: 1.5rem;
+  }
+
+  .bluebox p {
+    font-size: 1rem;
+  }
+
+  .register-box h4 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .bluebox {
+    padding: 1rem;
+  }
+
+  .register-box {
+    padding: 1rem;
+  }
+
+  .bluebox h3 {
+    font-size: 1.25rem;
+  }
+
+  .bluebox p {
+    font-size: 0.875rem;
+  }
+
+  .register-box h4 {
+    font-size: 1.125rem;
+  }
+
+  .input-wrapper input {
+    font-size: 0.875rem;
+  }
+
+  .animated-button {
+    font-size: 0.875rem;
+  }
 }

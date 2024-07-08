@@ -1,13 +1,63 @@
-import { Brightness4, Brightness7 } from '@mui/icons-material';
-import { Button, IconButton, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useContext, useState } from 'react';
-import { AiOutlineUserAdd } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { animated, useSpring } from 'react-spring';
 import { ColorModeContext } from '../context/ThemeContext';
-import '../css/Login.css';
-import Rain from './Homepage'; // Import the Rain component
+import '../css/Login.css'; // Make sure to create this CSS file
+
+// Custom SVG components
+const BackgroundSVG = () => (
+    <svg className="background-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+        <path fill="#0099ff" fillOpacity="0.1" d="M0,64L48,80C96,96,192,128,288,128C384,128,480,96,576,106.7C672,117,768,171,864,197.3C960,224,1056,224,1152,197.3C1248,171,1344,117,1392,90.7L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+);
+
+const EmailIcon = (props) => (
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+    </svg>
+);
+
+const LockIcon = (props) => (
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+);
+
+// Custom Input Component
+const CustomInput = ({ icon: Icon, label, ...props }) => (
+    <div className="custom-input">
+        <label>{label}</label>
+        <div className="input-wrapper">
+            <input {...props} />
+            <Icon className="input-icon" />
+        </div>
+    </div>
+);
+
+// Animated Button Component
+const AnimatedButton = ({ children, ...props }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const buttonStyles = useSpring({
+        scale: isHovered ? 1.05 : 1,
+        config: { tension: 300, friction: 10 },
+    });
+
+    return (
+        <animated.button
+            style={buttonStyles}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className="animated-button"
+            {...props}
+        >
+            {children}
+        </animated.button>
+    );
+};
 
 const Login = () => {
     const navigate = useNavigate();
@@ -19,7 +69,7 @@ const Login = () => {
 
     const { mode, toggleColorMode } = useContext(ColorModeContext);
 
-    const props = useSpring({
+    const fadeIn = useSpring({
         opacity: 1,
         from: { opacity: 0 },
         config: { duration: 1000 }
@@ -31,96 +81,70 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Check if any field is empty
         if (!formData.email || !formData.password) {
             setFormError('Please fill out all fields.');
             return;
         }
-
         try {
-            const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/login`, formData);
-            localStorage.setItem('token', data.token);
+            const response = await axios.post(`${process.env.REACT_APP_URI}/api/auth/login`, formData);
+            localStorage.setItem('token', response.data.token);
             navigate('/chat');
         } catch (error) {
             console.error(error);
+            if (error.response && error.response.data) {
+                setFormError(error.response.data.message);
+            } else {
+                setFormError('An error occurred. Please try again.');
+            }
         }
     };
 
-    const navigateToRegister = () => {
-        navigate('/register');
-    };
-
     return (
-        <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
-            <Rain />
-            <animated.div style={{
-                ...props,
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: mode === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)',
-            }}>
-                <div className={`bg-blue-500 text-white p-4 rounded shadow-md mb-8 bluebox`}>
-                    <div className="flex justify-between items-center">
-                        <div>
-                            <Typography variant="h3" className="font-bold mb-2">Welcome to ChatApp!</Typography>
-                            <Typography variant="body1">Connect with your friends and family in real-time. Experience seamless communication like never before.</Typography>
-                        </div>
-                        <IconButton onClick={toggleColorMode} color="inherit">
-                            {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
-                        </IconButton>
-                    </div>
+        <div className={`login-container ${mode === 'dark' ? 'dark' : ''}`}>
+            <BackgroundSVG />
+            <animated.div style={fadeIn} className="login-content">
+                <div className="bluebox">
+                    <h3>Welcome to ChatApp!</h3>
+                    <p>Connect with your friends and family in real-time. Experience seamless communication like never before.</p>
                 </div>
-                <animated.div style={props} className={`login-box p-8 rounded shadow-md ${mode === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <Typography variant="h4" className={mode === 'dark' ? 'text-white' : ''}>Login</Typography>
-                        <TextField
+                <animated.div style={fadeIn} className={`login-box ${mode === 'dark' ? 'dark' : ''}`}>
+                    <form onSubmit={handleSubmit}>
+                        <h4>Login</h4>
+                        <CustomInput
+                            icon={EmailIcon}
                             name="email"
                             label="Email"
                             type="email"
                             value={formData.email}
                             onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{ className: mode === 'dark' ? 'text-gray-300' : '' }}
-                            InputProps={{
-                                className: mode === 'dark' ? 'text-white dark-input' : '',
-                            }}
+                            placeholder="Enter your email"
                         />
-
-                        <TextField
+                        <CustomInput
+                            icon={LockIcon}
                             name="password"
                             label="Password"
                             type="password"
                             value={formData.password}
                             onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            InputLabelProps={{ className: mode === 'dark' ? 'text-gray-300' : '' }}
-                            InputProps={{
-                                className: mode === 'dark' ? 'text-white dark-input' : '',
-                            }}
+                            placeholder="Enter your password"
                         />
-                        {formError && <Typography variant="body2" className="text-red-500">{formError}</Typography>}
-                        <Button type="submit" variant="contained" color="primary">
-                            Login
-                        </Button>
+                        {formError && <p className="error-message">{formError}</p>}
+                        <AnimatedButton type="submit">Login</AnimatedButton>
                     </form>
-                    <div className="text-center mt-4">
-                        <Typography className={mode === 'dark' ? 'text-gray-300' : ''}>No account? <span className="text-blue-500 cursor-pointer" onClick={navigateToRegister}>Register <AiOutlineUserAdd /></span></Typography>
+                    <div className="register-link">
+                        <p>
+                            No account?{' '}
+                            <span onClick={() => navigate('/register')}>Register</span>
+                        </p>
                     </div>
                 </animated.div>
             </animated.div>
+            <button onClick={toggleColorMode} className="theme-toggle">
+                {mode === 'dark' ? '🌞' : '🌙'}
+            </button>
         </div>
     );
 };
+
 
 export default Login;
