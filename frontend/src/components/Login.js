@@ -27,15 +27,22 @@ const LockIcon = (props) => (
 );
 
 // Custom Input Component
-const CustomInput = ({ icon: Icon, label, ...props }) => (
-    <div className="custom-input">
-        <label>{label}</label>
-        <div className="input-wrapper">
-            <input {...props} />
-            <Icon className="input-icon" />
+const CustomInput = ({ icon: Icon, label, ...props }) => {
+    const { mode } = useContext(ColorModeContext);
+
+    return (
+        <div className="custom-input">
+            <label>{label}</label>
+            <div className="input-wrapper">
+                <input
+                    style={{ color: mode === 'dark' ? '#000' : '#333' }}
+                    {...props}
+                />
+                <Icon className="input-icon" />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 // Animated Button Component
 const AnimatedButton = ({ children, ...props }) => {

@@ -34,18 +34,23 @@ const LockIcon = (props) => (
 );
 
 // Custom Input Component
-const CustomInput = ({ icon: Icon, label, ...props }) => (
-    <div className="mb-4 relative">
-        <label className="block text-sm font-medium mb-1">{label}</label>
-        <div className="relative">
-            <input
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                {...props}
-            />
-            <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+const CustomInput = ({ icon: Icon, label, ...props }) => {
+    const { mode } = useContext(ColorModeContext);
+
+    return (
+        <div className="mb-4 relative">
+            <label className="block text-sm font-medium mb-1">{label}</label>
+            <div className="relative">
+                <input
+                    style={{ color: mode === 'dark' ? '#000' : '#333' }}
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+                    {...props}
+                />
+                <Icon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
         </div>
-    </div>
-);
+    );
+};
 
 // Animated Button Component
 const AnimatedButton = ({ children, ...props }) => {
