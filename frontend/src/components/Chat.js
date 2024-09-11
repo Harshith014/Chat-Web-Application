@@ -348,7 +348,7 @@ const Chat = () => {
                     </Box>
                 )}
                 {(isChatMaximized || !isSmallScreen) && (
-                    <Box className={`chat-main flex flex-col ${isChatMaximized ? 'w-full' : 'w-3/4'}`} style={{ outline: `1px solid ${theme.palette.divider}` }}>
+                    <Box className={`chat-main flex flex-col ${isChatMaximized ? 'w-full' : 'w-3/4'}`} style={{ outline: `1px solid ${theme.palette.divider}`, display: 'flex', flexDirection: 'column' }}>
                         {receiver ? (
                             <>
                                 <Box className="flex-none p-4 flex items-center justify-between" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
@@ -414,7 +414,9 @@ const Chat = () => {
                                     style={{
                                         ...chatHistoryAnimation,
                                         backgroundColor: selectedThemes[receiver] ? selectedThemes[receiver].backgroundColor : theme.palette.background.default,
-                                        maxHeight: 'calc(100vh - 200px)',
+                                        flexGrow: 1,
+                                        flexShrink: 1,
+                                        flexBasis: 'auto',
                                     }}
                                 >
                                     {chatHistory[receiver]?.map((chat, index) => {
@@ -472,7 +474,12 @@ const Chat = () => {
                                         )
                                     })}
                                 </animated.div>
-                                <Box className="chat-input flex items-center p-4" style={{ backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}` }}>
+                                <Box className="chat-input flex items-center p-4" style={{
+                                    backgroundColor: mode === 'dark' ? '#333' : '#f8f9fa', outline: `1px solid ${theme.palette.divider}`,
+                                    flexShrink: 0,
+                                    position: 'sticky',
+                                    bottom: 0,
+                                }}>
                                     <TextField
                                         className="flex-grow mr-2"
                                         placeholder="Type your message"
