@@ -13,76 +13,74 @@ dotenv.config();
 connectDB();
 
 const app = express();
-
-app.use(cors({
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
     origin: [process.env.URI],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+  }
+});
+
+app.use(cors({
+  origin: [process.env.URI],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
 }));
 
-// Set custom CORS headers explicitly
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', process.env.URI); // Allow your frontend domain
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
+server.use(cors({
+  origin: [process.env.URI],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 
-const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: {
-        origin: [process.env.URI],
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true,
-    }
-});
-
-// Socket.IO event handling
-io.on('connection', (socket) => {
-    console.log('New client connected');
-
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    });
-
-    // Example: Handle chat message event
-    socket.on('chatMessage', async (data) => {
-        try {
-            const { sender, receiver, message } = data;
-
-            // Save message to the database
-            const chat = new Chat({ sender, receiver, message });
-            await chat.save();
-
-            // Emit the message to the sender and receiver
-            socket.emit('message', data);
-            socket.broadcast.emit('message', data);
-
-            // Create and emit notification to the receiver
-            const senderUser = await User.findById(sender);
-            const senderUsername = senderUser ? senderUser.username : 'Unknown';
-            const notification = new Notification({
-                user: receiver,
-                sender: sender,
-                message: `You got a message from ${senderUsername}`,
-            });
-            await notification.save();
-
-            socket.broadcast.emit('notification', {
-                user: receiver,
-                message: `You got a message from ${senderUsername}`,
-            });
-        } catch (error) {
-            console.error(error);
-        }
-    });
-});
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, "build")));
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/notifications', notificationRoutes);
+
+// Socket.IO event handling
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+
+  // Example: Handle chat message event
+  socket.on('chatMessage', async (data) => {
+    try {
+      const { sender, receiver, message } = data;
+
+      // Save message to the database
+      const chat = new Chat({ sender, receiver, message });
+      await chat.save();
+
+      // Emit the message to the sender and receiver
+      socket.emit('message', data);
+      socket.broadcast.emit('message', data);
+
+      // Create and emit notification to the receiver
+      const senderUser = await User.findById(sender);
+      const senderUsername = senderUser ? senderUser.username : 'Unknown';
+      const notification = new Notification({
+        user: receiver,
+        sender: sender,
+        message: `You got a message from ${senderUsername}`,
+      });
+      await notification.save();
+
+      socket.broadcast.emit('notification', {
+        user: receiver,
+        message: `You got a message from ${senderUsername}`,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  });
+});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
