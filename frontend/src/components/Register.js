@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 import axios from 'axios';
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { animated, useSpring } from 'react-spring';
 import { ColorModeContext } from '../context/ThemeContext';
 import '../css/Register.css';
+import LoadingComponent from './Loading';
 
 // Custom SVG components
 const BackgroundSVG = () => (
@@ -82,7 +84,7 @@ const Register = () => {
         password: ''
     });
     const [formError, setFormError] = useState('');
-
+    const [isLoading, setIsLoading] = useState(false);
     const { mode, toggleColorMode } = useContext(ColorModeContext);
 
     const fadeIn = useSpring({
@@ -101,12 +103,15 @@ const Register = () => {
             setFormError('Please fill out all fields.');
             return;
         }
+        setIsLoading(true);
         try {
             const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/register`, formData);
             navigate('/login');
         } catch (error) {
             console.error(error.response.data);
             setFormError('Registration failed. Please try again.');
+        } finally {
+            setIsLoading(false); // End loading
         }
     };
 
@@ -129,37 +134,42 @@ const Register = () => {
                     }}
                     className="p-8"
                 >
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <CustomInput
-                            icon={UserIcon}
-                            name="username"
-                            label="Username"
-                            type="text"
-                            value={formData.username}
-                            onChange={handleChange}
-                            placeholder="Enter your username"
-                        />
-                        <CustomInput
-                            icon={EmailIcon}
-                            name="email"
-                            label="Email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Enter your email"
-                        />
-                        <CustomInput
-                            icon={LockIcon}
-                            name="password"
-                            label="Password"
-                            type="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Enter your password"
-                        />
-                        {formError && <p className="text-red-500 text-sm">{formError}</p>}
-                        <AnimatedButton type="submit">Register</AnimatedButton>
-                    </form>
+                    {isLoading ? (
+                        <LoadingComponent />
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <CustomInput
+                                icon={UserIcon}
+                                name="username"
+                                label="Username"
+                                type="text"
+                                value={formData.username}
+                                onChange={handleChange}
+                                placeholder="Enter your username"
+                            />
+                            <CustomInput
+                                icon={EmailIcon}
+                                name="email"
+                                label="Email"
+                                type="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="Enter your email"
+                            />
+                            <CustomInput
+                                icon={LockIcon}
+                                name="password"
+                                label="Password"
+                                type="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Enter your password"
+                            />
+                            {formError && <p className="text-red-500 text-sm">{formError}</p>}
+                            <AnimatedButton type="submit">Register</AnimatedButton>
+                        </form>
+
+                    )}
                     <div className="text-center mt-4">
                         <p className="text-gray-600">
                             Already have an account?{' '}
