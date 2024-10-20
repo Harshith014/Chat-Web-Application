@@ -97,13 +97,25 @@ const Login = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_URI}/api/auth/login`, formData);
             localStorage.setItem('token', response.data.token);
+            setFormData({
+                email: "",
+                password: "",
+              });
             navigate('/chat');
         } catch (error) {
             console.error(error);
             if (error.response && error.response.data) {
                 setFormError(error.response.data.message);
+                setFormData({
+                    email: "",
+                    password: "",
+                  });
             } else {
                 setFormError('An error occurred. Please try again.');
+                setFormData({
+                    email: "",
+                    password: "",
+                  });
             }
         } finally {
             setIsLoading(false); // End loading

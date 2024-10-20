@@ -106,15 +106,35 @@ const Register = () => {
         setIsLoading(true);
         try {
             const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/register`, formData);
+            setFormData({
+                username: "",
+                email: "",
+                password: "",
+              });
             navigate('/login');
         } catch (error) {
             console.error(error);
             if (error.response?.data?.message) {
                 setFormError(error.response.data.message);
+                setFormData({
+                    username: "",
+                    email: "",
+                    password: "",
+                  });
             } else if (error.response?.data?.msg) {
                 setFormError(error.response.data.msg);
+                setFormData({
+                    username: "",
+                    email: "",
+                    password: "",
+                  });
             } else {
                 setFormError('Registration failed. Please try again.');
+                setFormData({
+                    username: "",
+                    email: "",
+                    password: "",
+                  });
             }
         } finally {
             setIsLoading(false); // End loading
