@@ -108,8 +108,14 @@ const Register = () => {
             const { data } = await axios.post(`${process.env.REACT_APP_URI}/api/auth/register`, formData);
             navigate('/login');
         } catch (error) {
-            console.error(error.response.data);
-            setFormError('Registration failed. Please try again.');
+            console.error(error);
+            if (error.response?.data?.message) {
+                setFormError(error.response.data.message);
+            } else if (error.response?.data?.msg) {
+                setFormError(error.response.data.msg);
+            } else {
+                setFormError('Registration failed. Please try again.');
+            }
         } finally {
             setIsLoading(false); // End loading
         }
@@ -137,38 +143,44 @@ const Register = () => {
                     {isLoading ? (
                         <LoadingComponent />
                     ) : (
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <CustomInput
-                                icon={UserIcon}
-                                name="username"
-                                label="Username"
-                                type="text"
-                                value={formData.username}
-                                onChange={handleChange}
-                                placeholder="Enter your username"
-                            />
-                            <CustomInput
-                                icon={EmailIcon}
-                                name="email"
-                                label="Email"
-                                type="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="Enter your email"
-                            />
-                            <CustomInput
-                                icon={LockIcon}
-                                name="password"
-                                label="Password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                placeholder="Enter your password"
-                            />
-                            {formError && <p className="text-red-500 text-sm">{formError}</p>}
-                            <AnimatedButton type="submit">Register</AnimatedButton>
-                        </form>
+                        <>
+                            {formError && (
+                                <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200">
+                                    <p className="text-red-600 text-sm">{formError}</p>
+                                </div>
+                            )}
+                            <form onSubmit={handleSubmit} className="space-y-4">
+                                <CustomInput
+                                    icon={UserIcon}
+                                    name="username"
+                                    label="Username"
+                                    type="text"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    placeholder="Enter your username"
+                                />
+                                <CustomInput
+                                    icon={EmailIcon}
+                                    name="email"
+                                    label="Email"
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="Enter your email"
+                                />
+                                <CustomInput
+                                    icon={LockIcon}
+                                    name="password"
+                                    label="Password"
+                                    type="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="Enter your password"
+                                />
 
+                                <AnimatedButton type="submit">Register</AnimatedButton>
+                            </form>
+                        </>
                     )}
                     <div className="text-center mt-4">
                         <p className="text-gray-600">
